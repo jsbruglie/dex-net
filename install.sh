@@ -34,11 +34,20 @@ ros)
 	exit 1
 esac
 
+# update repos
+sudo add-apt-repository ppa:zarquon42/meshlab
+sudo apt update
+
 # install apt deps
-sudo apt-get install cmake libvtk5-dev python-vtk python-sip python-qt4 libosmesa6-dev meshlab libhdf5-dev
+sudo apt-get install python-tk libboost-all-dev libgeos-dev cmake libvtk5-dev \
+	python-vtk python-sip python-qt4 libosmesa6-dev \
+	meshlab libhdf5-dev libspatialindex-dev libxml2-dev libxslt1-dev \
+	libboost-python-dev python-all-dev python-dev python-pip
 
 # install pip deps
-pip install numpy scipy scikit-learn scikit-image opencv-python pyassimp tensorflow h5py mayavi matplotlib catkin_pkg multiprocess dill cvxopt ipython pillow pyhull setproctitle trimesh
+#pip install numpy scipy scikit-learn scikit-image opencv-python pyassimp tensorflow h5py mayavi matplotlib catkin_pkg multiprocess dill cvxopt ipython pillow pyhull setproctitle trimesh
+pip2 install --upgrade pip --user
+pip2 install numpy scipy scikit-learn scikit-image opencv-python pyassimp h5py matplotlib multiprocess dill cvxopt ipython pillow pyhull setproctitle trimesh --user
 
 # install deps from source
 mkdir deps
@@ -69,7 +78,7 @@ git clone https://github.com/BerkeleyAutomation/visualization.git
 
 # install meshpy
 cd meshpy
-python setup.py develop
+python setup.py develop --user
 cd ../
 
 # install all Berkeley AUTOLAB modules
@@ -78,22 +87,22 @@ in
 python)
 	# autolab_core
 	cd autolab_core
-	python setup.py develop
+	python setup.py develop --user
 	cd ..
 
 	# perception
 	cd perception
-	python setup.py develop
+	python setup.py develop --user
 	cd ..
 
 	# gqcnn
 	cd gqcnn
-	python setup.py develop
+	python setup.py develop --user
 	cd ..
 
 	# visualization
 	cd visualization
-	python setup.py develop
+	python setup.py develop --user
 	cd ..
 	cd ..
 	;;
@@ -110,4 +119,4 @@ ros)
 esac
 
 # install dex-net
-python setup.py develop
+python setup.py develop --user
