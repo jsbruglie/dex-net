@@ -1073,17 +1073,19 @@ class DexNet(object):
                     continue                 
 
                 print 'Grasp %d %s=%.5f' %(grasp.id, metric_name, metric)
-                T_obj_world = RigidTransform(from_frame='obj',
-                                             to_frame='world')
                 color = plt.get_cmap('hsv')(q_to_c(metric))[:-1]
-                T_obj_gripper = grasp.gripper_pose(gripper)
                 grasp = grasp.perpendicular_table(stable_pose)
                 
+                fix_pose = stable_pose.T_obj_world
+                xyz = fix_pose.translation
+                fix_pose.translation = np.array([0,0,xyz[2]])
+
                 vis.figure()
                 vis.gripper_on_object(gripper, grasp, object,
+                                      #stable_pose=stable_pose.T_obj_world
+                                      stable_pose=fix_pose,
                                       gripper_color=color,
                                       object_color=(0.9,0.9,0.9),
-                                      stable_pose=stable_pose.T_obj_world,
                                       plot_table=True)
                 vis.show(animate=config['animate'])
 

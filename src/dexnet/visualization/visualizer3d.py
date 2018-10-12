@@ -144,6 +144,11 @@ class DexNetVisualizer3D(Visualizer3D):
             T_obj_world = RigidTransform(from_frame='obj',
                                          to_frame='world')
         else:
-            T_obj_world = Visualizer3D.mesh_stable_pose(obj.mesh.trimesh, stable_pose, T_table_world=T_table_world, color=object_color, style=style, plot_table=plot_table, dim=table_dim)
+            T_obj_world = stable_pose
+            Visualizer3D.mesh_stable_pose(
+                mesh=obj.mesh.trimesh, T_obj_table=stable_pose,
+                T_table_world=T_table_world, color=object_color,
+                style=style, plot_table=plot_table,
+                dim=table_dim, plot_com=False, smooth=False)
         DexNetVisualizer3D.gripper(gripper, grasp, T_obj_world, color=gripper_color)
 

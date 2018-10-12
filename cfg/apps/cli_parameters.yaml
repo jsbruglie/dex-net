@@ -78,3 +78,16 @@ metrics:
     torque_scaling: 0.01
     wrench_norm_thresh: 0.001
     wrench_regularizer: 0.0000000001
+
+  ferrari_canny:
+    quality_method: ferrari_canny_L1
+    friction_coef: 0.5
+    num_cone_faces: 8
+    soft_fingers: 1
+    quality_type: quasi_static    
+    check_approach: False
+    all_contacts_required: 1    
+    # optional deterministic parameters
+    torque_scaling: 100.0
+    wrench_norm_thresh: 0.001
+    wrench_regularizer: 0.0000000001

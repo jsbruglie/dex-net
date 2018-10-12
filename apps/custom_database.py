@@ -1,36 +1,31 @@
 """
-
+Tools for creating a custom grasp database
+Author: Borrego 
 """
 
 import sys
-import dexnet
-from autolab_core import YamlConfig
 import os
 import time
 import yaml
 import numpy as np
-import dexnet.grasping.gripper as gr
 
+# Yaml config
+from autolab_core import YamlConfig
+# Dex-Net
+import dexnet
+import dexnet.grasping.gripper as gr
+import dexnet.grasping.grasp_quality_config as gqc
 # Stable pose
 from meshpy import StablePose 
 
 # Default database configuration file path
 DEFAULT_CFG = 'cfg/apps/custom_database.yaml'
-# Default object directory
-DEFAULT_OBJ_PATH = '/home/borrego/dataset/'
-# Default gripper name
-DEFAULT_GRIPPER = 'baxter'
-# Default dataset name
-#DEFAULT_DS = 'kit'
-DEFAULT_DS = 'random_objects'
-# Default grasp output directory
-DEFAULT_OUT = '../OUT/random'
 
 class CreateDBUtil(object):
 
   def __init__(self):
     """ Creates object  
-    """    
+    """
     self.api = dexnet.DexNet()
     self.cfg = YamlConfig(DEFAULT_CFG)
     self.api.open_database(self.cfg['db_path'], create_db=True)
@@ -38,6 +33,9 @@ class CreateDBUtil(object):
 
     #self.addObjects(self.cfg['ds_name'], self.cfg['obj_path'], self.cfg)
     #obj_name = self.api.list_objects()[0]
+    
+    #for object_name in self.api.list_objects():
+    #  self.api.sample_grasps(config=self.cfg, object_name=object_name, gripper_name=self.cfg['gripper'])
 
     #for object_name in self.api.list_objects():
     #  obj = self.api.dataset[object_name]
@@ -51,11 +49,11 @@ class CreateDBUtil(object):
     #self.importStablePoses(self.cfg['in_stable_poses_dir'], self.cfg)
     self.exportGrasps(self.cfg['gripper'], self.cfg['out_grasps_dir'], self.cfg)
 
-
     #for i in range(0, 1000):
     #  object_name = '{0:0>3}_coll'.format(i)
     #for object_name in self.api.list_objects():
-    #  self.api.compute_metrics(config=self.cfg, object_name=object_name, metric_name="force_closure", gripper_name=DEFAULT_GRIPPER)
+    #  self.api.compute_metrics(config=self.cfg, object_name=object_name,
+    #    metric_name=self.cfg['metric'], gripper_name=self.cfg['gripper'])
 
     #self.api.display_object(obj_name, config=self.cfg)
     #self.api.display_stable_poses('000', config=self.cfg)
@@ -69,6 +67,10 @@ class CreateDBUtil(object):
 
   def addObjects(self, dataset, object_path, config):
     """ Adds objects to the currently active dataset
+    
+    Parameters
+    ----------
+    TODO
     """
 
     dataset_path = os.path.join(config['ds_name'], dataset)
@@ -99,9 +101,12 @@ class CreateDBUtil(object):
             except Exception as e:
                 print("Adding object failed: {}".format(str(e)))
 
-
   def exportGrasps(self, gripper_name, out_dir, config):
     """ Exports grasp comfigurations to file
+    
+    Parameters
+    ----------
+    TODO
     """
 
     gripper = gr.RobotGripper.load(gripper_name, gripper_dir=config['gripper_dir'])
@@ -132,8 +137,12 @@ class CreateDBUtil(object):
         yaml.dump(data, outfile, default_flow_style=False)
 
   def importStablePoses(self, in_dir, config):
-    ''' Import stable poses from external files to HDF5 database
-    '''
+    """ Import stable poses from external files to HDF5 database
+        
+    Parameters
+    ----------
+    TODO
+    """
 
     prob = 1.0
 
@@ -156,6 +165,12 @@ class CreateDBUtil(object):
       self.api.dataset.store_stable_poses(obj_name, stable_poses, force_overwrite=True)
 
   def importMetrics(self, in_dir, metric_name, config=None):
+    """ TODO
+
+    Parameters
+    ----------
+    TODO
+    """
     print("TODO")
 
 

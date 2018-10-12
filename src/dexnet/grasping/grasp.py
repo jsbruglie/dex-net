@@ -723,10 +723,13 @@ class ParallelJawPtGrasp3D(PointGrasp):
             aligned grasp
         """
         if isinstance(stable_pose, StablePose):
-            table_normal = stable_pose.r[2,:]
+            table_normal = stable_pose.r.T.dot(np.array([0,0,-1]))
+            #table_normal = inv(stable_pose.r)[2,:]
         else:
             table_normal = stable_pose.rotation[2,:]
-        theta = self._angle_aligned_with_table(-table_normal)
+            #table_normal = inv(stable_pose.rotation)[2,:]
+        #theta = self._angle_aligned_with_table(table_normal)
+        theta = self._angle_aligned_with_table(table_normal)
         new_grasp = deepcopy(self)
         new_grasp.approach_angle = theta
         return new_grasp

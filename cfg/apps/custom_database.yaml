@@ -3,21 +3,21 @@
 #
 
 # Path to database hdf5
-#db_path: ws_kit.db.hdf5
-db_path: ws_random_coll.db.hdf5
+db_path: ws_kit.db.hdf5
+#db_path: ws_random_coll.db.hdf5
 # Dataset name
-#ds_name: kit
-ds_name: random_objects
+ds_name: kit
+#ds_name: random_objects
 # Object directory
 obj_path: /home/borrego/dataset
 # Gripper name
 gripper: baxter
 # Input stable poses directory
-#in_stable_poses_dir: ../kit/rest
-in_stable_poses_dir: ../random/rest
+in_stable_poses_dir: ../kit/rest
+#in_stable_poses_dir: ../random/rest
 # Output grasp directory
-#out_grasps_dir: ../kit/grasps
-out_grasps_dir: ../random/grasps
+out_grasps_dir: ../kit/grasps
+#out_grasps_dir: ../random/grasps
 
 # Grasping params (relative paths for gripper_dir and cache_dir are resolved relative to dex-net root)
 
@@ -62,6 +62,7 @@ stp_min_prob: -0.01
 
 
 # Visualization params
+#show_gripper: True
 show_gripper: True
 max_plot_gripper: 100
 min_metric: -0.01
@@ -75,22 +76,34 @@ export_overwrite: True
 
 # Grasp Sampling
 
+# Type of grasp sampler {uniform, gaussian, antipodal}
 grasp_sampler: 'antipodal'
-target_num_grasps: 100
-# Unused
+# Target number of grasps per object
+target_num_grasps: 200
+# Number of rotations in angle expansion step (unused)
 num_grasp_rots: 32
-
+# Sampling friction coefficient
 sampling_friction_coef: 0.5
+# Number of faces in pyramid approximation of friction cone
 num_cone_faces: 8
+# Max number of grasp sampling iterations
 max_grasp_sampling_iters: 5
-grasp_samples_per_surface_point: 2
+# Grasp samples per surface point - antipodal
+grasp_samples_per_surface_point: 4
+# Maximum number of surface points - antipodal
 max_num_surface_points: 100
+# Minimum contacts distance
 min_contact_dist: 0.0025
+
+
 dir_prior: 1.0
 
 # Metric params
-quality_scale: 0.3
 
+# Metric to compute
+metric: robust_force_closure
+
+quality_scale: 0.3
 
 metrics:
   force_closure:
@@ -106,3 +119,57 @@ metrics:
     torque_scaling: 0.01
     wrench_norm_thresh: 0.001
     wrench_regularizer: 0.0000000001
+
+  ferrari_canny:
+    quality_method: ferrari_canny_L1
+    friction_coef: 0.5
+    num_cone_faces: 8
+    soft_fingers: 1
+    quality_type: quasi_static    
+    check_approach: False
+    all_contacts_required: 1    
+    # optional deterministic parameters
+    torque_scaling: 100.0
+    wrench_norm_thresh: 0.001
+    wrench_regularizer: 0.0000000001
+
+  robust_force_closure:
+    # required parameters
+    quality_method: force_closure
+    friction_coef: 0.5
+    num_cone_faces: 8
+    soft_fingers: 1
+    quality_type: robust_quasi_static
+    check_approach: False
+    all_contacts_required: 1    
+    
+    # optional deterministic parameters
+    torque_scaling: 0.01
+    wrench_norm_thresh: 0.001
+    wrench_regularizer: 0.0000000001
+    
+    # PARAMS for robust grasp metrics
+    # uncertainty
+    grasp_uncertainty:
+      sigma_grasp_trans_x: 0.005
+      sigma_grasp_trans_y: 0.005
+      sigma_grasp_trans_z: 0.005
+      sigma_grasp_rot_x: 0.001
+      sigma_grasp_rot_y: 0.001
+      sigma_grasp_rot_z: 0.001
+      num_prealloc_samples: 0
+    obj_uncertainty:
+      sigma_obj_trans_x: 0.01
+      sigma_obj_trans_y: 0.01
+      sigma_obj_trans_z: 0.01
+      sigma_obj_rot_x: 0.01
+      sigma_obj_rot_y: 0.01
+      sigma_obj_rot_z: 0.01
+      sigma_obj_scale: 0.00
+      num_prealloc_samples: 10
+    params_uncertainty:
+      sigma_friction_coef: 0.1
+      num_prealloc_samples: 0
+    # sampling params
+    num_quality_samples: 25
+    sampling_snapshot_rate: 10
