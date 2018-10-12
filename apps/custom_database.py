@@ -47,7 +47,7 @@ class CreateDBUtil(object):
     #  self.api.sample_grasps(config=self.cfg, object_name=object_name, gripper_name=self.cfg['gripper'])
 
     #self.importStablePoses(self.cfg['in_stable_poses_dir'], self.cfg)
-    self.exportGrasps(self.cfg['gripper'], self.cfg['out_grasps_dir'], self.cfg)
+    #self.exportGrasps(self.cfg['gripper'], self.cfg['out_grasps_dir'], self.cfg)
 
     #for i in range(0, 1000):
     #  object_name = '{0:0>3}_coll'.format(i)
@@ -62,6 +62,8 @@ class CreateDBUtil(object):
     #for i in range(0, 1000, 5):
     #  object_name = '{0:0>3}_coll'.format(i)
     #  self.api.display_grasps(object_name, self.cfg['gripper'], 'force_closure', config=self.cfg)
+
+    self.exportMetrics(self.cfg['gripper'], self.cfg['out_metrics_dir'], self.cfg)
 
     self.api.close_database()
 
@@ -100,6 +102,41 @@ class CreateDBUtil(object):
               self.api.add_object(obj_path, config)
             except Exception as e:
                 print("Adding object failed: {}".format(str(e)))
+
+  def exportMetrics(self, gripper_name, out_dir, config):
+    """ Exports grasp comfigurations to file
+    
+    Parameters
+    ----------
+    TODO
+    """
+
+    gripper = gr.RobotGripper.load(gripper_name, gripper_dir=config['gripper_dir'])
+    
+    for obj_name in self.api.list_objects():
+
+      out_name = os.path.join(out_dir, '{}.baseline.yml'.format(obj_name))
+      
+      grasps, metrics = self.api.dataset.sorted_grasps(obj_name,
+        config['metric'], gripper=gripper.name)
+
+      data = dict(
+        object = dict(
+          name = str(obj_name),
+          grasp_candidates = dict()
+        )
+      )
+
+      data['object']['grasp_candidates'][gripper_name] = dict()
+
+      for grasp, metric in zip(grasps, metrics):
+        
+        idx = int(grasp.grasp_id_)
+        data['object']['grasp_candidates'][gripper_name][idx] = dict()
+        data['object']['grasp_candidates'][gripper_name][idx]['success'] = float(metric)
+
+      with open(out_name, 'w') as outfile:
+        yaml.dump(data, outfile, default_flow_style=False)
 
   def exportGrasps(self, gripper_name, out_dir, config):
     """ Exports grasp comfigurations to file

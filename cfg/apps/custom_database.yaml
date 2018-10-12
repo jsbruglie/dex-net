@@ -18,6 +18,8 @@ in_stable_poses_dir: ../kit/rest
 # Output grasp directory
 out_grasps_dir: ../kit/grasps
 #out_grasps_dir: ../random/grasps
+# Output metrics directory
+out_metrics_dir: ../kit/baseline
 
 # Grasping params (relative paths for gripper_dir and cache_dir are resolved relative to dex-net root)
 
